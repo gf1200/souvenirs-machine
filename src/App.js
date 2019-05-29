@@ -2,75 +2,122 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Level = styled.div`
-	display: flex;
-	justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Display = styled.div`
-	background: grey;
-	padding: 0.5rem;
-	margin: 1rem 0;
+  background: grey;
+  padding: 0.5rem;
+  margin: 1rem 0;
 `;
 
 const INITIAL_STATE = {
-	charge: 2,
-	totalSouvenirs: 20,
-	coinsForChange: {
-		one: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-		two: [2, 2, 2, 2, 2],
-		five: []
-	}
+  charge: 2,
+  availableSouvenirs: 3,
+  acceptedCoins: [1, 2, 5],
+  coinsForChange: {
+    one: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    two: [2, 2, 2, 2, 2],
+    five: []
+  }
 };
 
 class App extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = { ...INITIAL_STATE, totalCoins: 0, messageToDisplay: '' };
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...INITIAL_STATE,
+      totalSouvenirs: 0,
+      totalCoins: 0,
+      messageToDisplay: ''
+    };
 
-		this.textInput = React.createRef();
-		this.acceptCoins = this.acceptCoins.bind(this);
-	}
+    this.textInput = React.createRef();
+    this.acceptCoins = this.acceptCoins.bind(this);
+  }
 
-	acceptCoins() {
-		const loaded = this.textInput.current.value;
-		let coin = parseFloat(loaded);
+  makeSouvenir() {
+    this.setState(({ totalCoins, totalSouvenirs, messageToDisplay }) => ({
+      totalCoins: 0,
+      totalSouvenirs: totalSouvenirs + 1,
+      messageToDisplay: ''
+    }));
+  }
 
-		if (coin === 1 || coin === 2 || coin === 5) {
-			this.setState(({ totalCoins }) => ({ totalCoins: totalCoins + coin }));
-		} else {
-			this.setState(({ messageToDisplay }) => ({
-				messageToDisplay: `Sorry ${loaded} is not accept. Please put in correct value`
-			}));
-		}
-	}
+  isRest() {}
 
-	render() {
-		const { messageToDisplay, totalSouvenirs, totalCoins } = this.state;
+  isCharge() {
+    const { totalCoins, charge } = this.state;
 
-		let displayMessage = messageToDisplay;
-		if (!messageToDisplay) displayMessage = 'Please, put in a coin';
+    if (totalCoins === charge) return this.makeSouvenir();
+    if (totalCoins > charge) return this.isRest();
+    else {
+      this.setState(({ messageToDisplay, totalCoins }) => ({
+        messageToDisplay: `Total paid for now: ${totalCoins} 💰`
+      }));
+    }
+  }
 
-		// if (!totalSouvenirs) messageToDisplay = 'The machine is closed, no souvenirs inside. Sorry.';
+  acceptCoins() {
+    const loaded = this.textInput.current.value;
+    let coin = parseFloat(loaded);
+    this.textInput.current.value = '';
 
-		console.log(this.state);
-		return (
-			<>
-				<h1>Commemorative coin only PLN 2</h1>
+    if (this.state.acceptedCoins.some(acceptedCoin => acceptedCoin === coin)) {
+      this.setState(
+        ({ totalCoins }) => ({ totalCoins: totalCoins + coin }),
+        () => this.isCharge()
+      );
+    } else {
+      this.setState(({ messageToDisplay }) => ({
+        messageToDisplay: `⚠️ Sorry ${loaded} is not accept. Please put in correct value`
+      }));
+    }
+  }
 
-				<Display>{displayMessage}</Display>
-				<Level>
-					<p>Put coins hear and press START:</p>
-					<input
-						type='text'
-						ref={this.textInput}
-						disabled={!totalSouvenirs || totalCoins >= 2}
-						placeholder='PLN: 1,2 or 5'
-					/>
-					<button onClick={this.acceptCoins}>START</button>
-				</Level>
-			</>
-		);
-	}
+  render() {
+    const {
+      messageToDisplay,
+      availableSouvenirs,
+      totalSouvenirs,
+      totalCoins
+    } = this.state;
+    let isSouvenir = availableSouvenirs - totalSouvenirs > 0;
+    let displayMessage = messageToDisplay;
+    if (!messageToDisplay) displayMessage = 'Please, put in a coin 💰';
+    if (!isSouvenir) displayMessage = 'Sorry no more souvenirs 😔';
+
+    const finishedSouvenirs = [];
+    for (let i = 0; i < totalSouvenirs; i++) {
+      finishedSouvenirs.push('📀');
+    }
+
+    console.table(this.state);
+    return (
+      <>
+        <h1>Commemorative coin only PLN 2</h1>
+
+        <Display>{displayMessage}</Display>
+        <Level>
+          <p>Put coins hear and press START:</p>
+          <input
+            type="text"
+            ref={this.textInput}
+            disabled={!isSouvenir || totalCoins >= 2}
+            placeholder="PLN: 1,2 or 5"
+          />
+          <button onClick={this.acceptCoins}>START</button>
+        </Level>
+        {!!totalSouvenirs && <h2>Your souvenirs:</h2>}
+        <p>
+          {finishedSouvenirs.map((souvenir, index) => (
+            <span key={index}>{souvenir}</span>
+          ))}
+        </p>
+      </>
+    );
+  }
 }
 
 export default App;
