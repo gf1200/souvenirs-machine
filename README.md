@@ -1,6 +1,6 @@
 # A machine with souvenirs for tourists in React
 
-## Instal parcel
+## 1. Instal parcel in global
 
 Yarn:
 
@@ -12,4 +12,16 @@ npm:
 
 ```
 npm install -g parcel-bundler
+```
+
+## 2. Run npm
+
+```
+npm install
+```
+
+## 3. Run project
+
+```
+npm start
 ```
