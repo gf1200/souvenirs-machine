@@ -1,0 +1,28 @@
+{
+	"name": "souvenirs-machine",
+	"version": "1.0.0",
+	"description": "A machine with souvenirs for tourists in React",
+	"main": "index.html",
+	"scripts": {
+		"start": "parcel src/index.html",
+		"test": "jest"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/gf1200/souvenirs-machine.git"
+	},
+	"keywords": [
+		"React",
+		"gf1200"
+	],
+	"author": "gf1200",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/gf1200/souvenirs-machine/issues"
+	},
+	"homepage": "https://github.com/gf1200/souvenirs-machine#readme",
+	"dependencies": {
+		"react": "^16.0.0",
+		"react-dom": "^16.8.6"
+	}
+}
