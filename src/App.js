@@ -15,12 +15,8 @@ const Display = styled.div`
 const INITIAL_STATE = {
   charge: 2,
   availableSouvenirs: 3,
-  acceptedCoins: [1, 2, 5],
-  coinsForChange: {
-    one: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    two: [2, 2, 2, 2, 2],
-    five: []
-  }
+  acceptedCoins: [1, , 2, 5, 10],
+  coinsForChange: [1, , 1, 1, 1, 1, 1, 1, 11, 2]
 };
 
 class App extends React.Component {
@@ -45,7 +41,58 @@ class App extends React.Component {
     }));
   }
 
-  isRest() {}
+  getRest(availableCoins = [], rest) {
+    let coinForRest = rest,
+      restPocket = [],
+      sumRestPocket = () => restPocket.reduce((acc, next) => acc + next, 0);
+
+    for (coinForRest; coinForRest > 0; coinForRest--) {
+      while (availableCoins.some(coin => coinForRest === coin)) {
+        const indexCoin = availableCoins.indexOf(coinForRest);
+        availableCoins = [
+          ...availableCoins.slice(0, indexCoin),
+          ...availableCoins.slice(indexCoin + 1)
+        ];
+        restPocket.push(coinForRest);
+        coinForRest = rest - sumRestPocket();
+      }
+    }
+    return {
+      availableCoins,
+      restPocket
+    };
+  }
+
+  isRest() {
+    const { charge, totalCoins, coinsForChange } = this.state;
+    let rest = totalCoins - charge;
+
+    this.getRest(coinsForChange, rest);
+
+    // let pocket = coinsForChange;
+    // let coinForRest = rest;
+    // let restPocket = [];
+    // let sumRestPocket = () => restPocket.reduce((acc, next) => acc + next, 0);
+
+    // for (coinForRest; coinForRest > 0; coinForRest--) {
+    //   while (pocket.some(coin => coinForRest === coin) && coinForRest > 0) {
+    //     const indexCoin = pocket.indexOf(coinForRest);
+    //     pocket = [
+    //       ...pocket.slice(0, indexCoin),
+    //       ...pocket.slice(indexCoin + 1)
+    //     ];
+    //     restPocket.push(coinForRest);
+    //     coinForRest = rest - sumRestPocket();
+    //   }
+    // }
+    // if (rest - sumRestPocket() === 0) {
+    //   console.log('mamy reszte:', sumRestPocket());
+    // } else {
+    //   console.log('nie mamy reszty :(');
+    // }
+
+    // console.log(coinForRest, restPocket);
+  }
 
   isCharge() {
     const { totalCoins, charge } = this.state;
@@ -66,7 +113,10 @@ class App extends React.Component {
 
     if (this.state.acceptedCoins.some(acceptedCoin => acceptedCoin === coin)) {
       this.setState(
-        ({ totalCoins }) => ({ totalCoins: totalCoins + coin }),
+        ({ totalCoins, coinsForChange }) => ({
+          totalCoins: totalCoins + coin,
+          coinsForChange: [...coinsForChange, coin]
+        }),
         () => this.isCharge()
       );
     } else {
