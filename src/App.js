@@ -14,18 +14,20 @@ const Display = styled.div`
 
 const INITIAL_STATE = {
 	charge: 2,
-	availableSouvenirs: 20,
-	coinsForChange: {
-		one: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-		two: [2, 2, 2, 2, 2],
-		five: []
-	}
+	availableSouvenirs: 3,
+	acceptedCoins: [1, , 2, 5, 10],
+	coinsForChange: [1, , 1, 1, 1, 1, 1, 1, 11, 2]
 };
 
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { ...INITIAL_STATE, totalSouvenirs: 0, totalCoins: 0, messageToDisplay: '' };
+		this.state = {
+			...INITIAL_STATE,
+			totalSouvenirs: 0,
+			totalCoins: 0,
+			messageToDisplay: ''
+		};
 
 		this.textInput = React.createRef();
 		this.acceptCoins = this.acceptCoins.bind(this);
@@ -39,19 +41,83 @@ class App extends React.Component {
 		}));
 	}
 
+	getRest(availableCoins = [], rest) {
+		let coinForRest = rest,
+			restPocket = [],
+			sumRestPocket = () => restPocket.reduce((acc, next) => acc + next, 0);
+
+		for (coinForRest; coinForRest > 0; coinForRest--) {
+			while (availableCoins.some(coin => coinForRest === coin)) {
+				const indexCoin = availableCoins.indexOf(coinForRest);
+				availableCoins = [
+					...availableCoins.slice(0, indexCoin),
+					...availableCoins.slice(indexCoin + 1)
+				];
+				restPocket.push(coinForRest);
+				coinForRest = rest - sumRestPocket();
+			}
+		}
+		return {
+			availableCoins,
+			restPocket
+		};
+	}
+
+	isRest() {
+		const { charge, totalCoins, coinsForChange } = this.state;
+		let rest = totalCoins - charge;
+
+		this.getRest(coinsForChange, rest);
+
+		// let pocket = coinsForChange;
+		// let coinForRest = rest;
+		// let restPocket = [];
+		// let sumRestPocket = () => restPocket.reduce((acc, next) => acc + next, 0);
+
+		// for (coinForRest; coinForRest > 0; coinForRest--) {
+		//   while (pocket.some(coin => coinForRest === coin) && coinForRest > 0) {
+		//     const indexCoin = pocket.indexOf(coinForRest);
+		//     pocket = [
+		//       ...pocket.slice(0, indexCoin),
+		//       ...pocket.slice(indexCoin + 1)
+		//     ];
+		//     restPocket.push(coinForRest);
+		//     coinForRest = rest - sumRestPocket();
+		//   }
+		// }
+		// if (rest - sumRestPocket() === 0) {
+		//   console.log('mamy reszte:', sumRestPocket());
+		// } else {
+		//   console.log('nie mamy reszty :(');
+		// }
+
+		// console.log(coinForRest, restPocket);
+	}
+
 	isCharge() {
-		if (this.state.totalCoins === this.state.charge) return this.makeSouvenir();
-		console.log('Czy możliwa reszta?');
+		const { totalCoins, charge } = this.state;
+
+		if (totalCoins === charge) return this.makeSouvenir();
+		if (totalCoins > charge) return this.isRest();
+		else {
+			this.setState(({ messageToDisplay, totalCoins }) => ({
+				messageToDisplay: `Total paid for now: ${totalCoins} 💰`
+			}));
+		}
 	}
 
 	acceptCoins() {
 		const loaded = this.textInput.current.value;
 		let coin = parseFloat(loaded);
+		this.textInput.current.value = '';
 
-		if (coin === 1 || coin === 2 || coin === 5) {
+		if (this.state.acceptedCoins.some(acceptedCoin => acceptedCoin === coin)) {
 			this.setState(
-				({ totalCoins }) => ({ totalCoins: totalCoins + coin }),
-				() => (this.state.totalCoins >= this.state.charge ? this.isCharge() : null)
+				({ totalCoins, coinsForChange }) => ({
+					totalCoins: totalCoins + coin,
+					coinsForChange: [...coinsForChange, coin]
+				}),
+				() => this.isCharge()
 			);
 		} else {
 			this.setState(({ messageToDisplay }) => ({
@@ -88,6 +154,12 @@ class App extends React.Component {
 					/>
 					<button onClick={this.acceptCoins}>START</button>
 				</Level>
+				{!!totalSouvenirs && <h2>Your souvenirs:</h2>}
+				<p>
+					{finishedSouvenirs.map((souvenir, index) => (
+						<span key={index}>{souvenir}</span>
+					))}
+				</p>
 			</>
 		);
 	}
