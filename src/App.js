@@ -14,9 +14,9 @@ const Display = styled.div`
 
 const INITIAL_STATE = {
 	charge: 2,
-	availableSouvenirs: 3,
-	acceptedCoins: [1, , 2, 5, 10],
-	coinsForChange: [1, , 1, 1, 1, 1, 1, 1, 11, 2]
+	availableSouvenirs: 10,
+	acceptedCoins: [1, 2, 5, 10],
+	coinsForChange: [1, 2]
 };
 
 class App extends React.Component {
@@ -26,15 +26,27 @@ class App extends React.Component {
 			...INITIAL_STATE,
 			totalSouvenirs: 0,
 			totalCoins: 0,
-			messageToDisplay: ''
+			messageToDisplay: '',
+			rest: null
 		};
 
 		this.textInput = React.createRef();
 		this.acceptCoins = this.acceptCoins.bind(this);
 	}
 
+	returnRest() {
+		const { totalCoins, coinsForChange } = this.state;
+		const { availableCoins, restPocket } = this.getRest(coinsForChange, totalCoins);
+		this.setState(({ rest, coinsForChange, totalCoins, messageToDisplay }) => ({
+			coinsForChange: availableCoins,
+			rest: restPocket,
+			totalCoins: 0,
+			messageToDisplay: 'Sorry no more coin for change 😔'
+		}));
+	}
+
 	makeSouvenir() {
-		this.setState(({ totalCoins, totalSouvenirs, messageToDisplay }) => ({
+		this.setState(({ totalSouvenirs, messageToDisplay }) => ({
 			totalCoins: 0,
 			totalSouvenirs: totalSouvenirs + 1,
 			messageToDisplay: ''
@@ -59,7 +71,8 @@ class App extends React.Component {
 		}
 		return {
 			availableCoins,
-			restPocket
+			restPocket,
+			restPocketSum: sumRestPocket()
 		};
 	}
 
@@ -67,31 +80,15 @@ class App extends React.Component {
 		const { charge, totalCoins, coinsForChange } = this.state;
 		let rest = totalCoins - charge;
 
-		this.getRest(coinsForChange, rest);
+		const { availableCoins, restPocket, restPocketSum } = this.getRest(coinsForChange, rest);
 
-		// let pocket = coinsForChange;
-		// let coinForRest = rest;
-		// let restPocket = [];
-		// let sumRestPocket = () => restPocket.reduce((acc, next) => acc + next, 0);
-
-		// for (coinForRest; coinForRest > 0; coinForRest--) {
-		//   while (pocket.some(coin => coinForRest === coin) && coinForRest > 0) {
-		//     const indexCoin = pocket.indexOf(coinForRest);
-		//     pocket = [
-		//       ...pocket.slice(0, indexCoin),
-		//       ...pocket.slice(indexCoin + 1)
-		//     ];
-		//     restPocket.push(coinForRest);
-		//     coinForRest = rest - sumRestPocket();
-		//   }
-		// }
-		// if (rest - sumRestPocket() === 0) {
-		//   console.log('mamy reszte:', sumRestPocket());
-		// } else {
-		//   console.log('nie mamy reszty :(');
-		// }
-
-		// console.log(coinForRest, restPocket);
+		if (restPocketSum === rest) {
+			this.setState(({ rest, coinsForChange }) => ({
+				rest: restPocket,
+				coinsForChange: availableCoins
+			}));
+			this.makeSouvenir();
+		} else return this.returnRest();
 	}
 
 	isCharge() {
@@ -100,8 +97,9 @@ class App extends React.Component {
 		if (totalCoins === charge) return this.makeSouvenir();
 		if (totalCoins > charge) return this.isRest();
 		else {
-			this.setState(({ messageToDisplay, totalCoins }) => ({
-				messageToDisplay: `Total paid for now: ${totalCoins} 💰`
+			this.setState(({ messageToDisplay, totalCoins, rest }) => ({
+				messageToDisplay: `Total paid for now: ${totalCoins} 💰`,
+				rest: null
 			}));
 		}
 	}
@@ -113,9 +111,10 @@ class App extends React.Component {
 
 		if (this.state.acceptedCoins.some(acceptedCoin => acceptedCoin === coin)) {
 			this.setState(
-				({ totalCoins, coinsForChange }) => ({
+				({ totalCoins, coinsForChange, rest }) => ({
 					totalCoins: totalCoins + coin,
-					coinsForChange: [...coinsForChange, coin]
+					coinsForChange: [...coinsForChange, coin],
+					rest: null
 				}),
 				() => this.isCharge()
 			);
@@ -127,7 +126,7 @@ class App extends React.Component {
 	}
 
 	render() {
-		const { messageToDisplay, availableSouvenirs, totalSouvenirs, totalCoins } = this.state;
+		const { messageToDisplay, availableSouvenirs, totalSouvenirs, totalCoins, rest } = this.state;
 		let isSouvenir = availableSouvenirs - totalSouvenirs > 0;
 		let displayMessage = messageToDisplay;
 		if (!messageToDisplay) displayMessage = 'Please, put in a coin 💰';
@@ -160,6 +159,15 @@ class App extends React.Component {
 						<span key={index}>{souvenir}</span>
 					))}
 				</p>
+				{rest && (
+					<p>
+						Take Your rest pleas:{' '}
+						{rest.map((rest, i) => (
+							<span key={i}>{rest}zł </span>
+						))}
+						💰
+					</p>
+				)}
 			</>
 		);
 	}
