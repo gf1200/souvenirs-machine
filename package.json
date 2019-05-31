@@ -5,6 +5,7 @@
 	"main": "index.html",
 	"scripts": {
 		"start": "parcel src/index.html",
+		"build": "parcel build src/index.html --public-url ./",
 		"test": "jest"
 	},
 	"repository": {
@@ -29,6 +30,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.0.0-0",
-		"@babel/preset-env": "^7.4.5"
+		"@babel/preset-env": "^7.4.5",
+		"parcel-bundler": "^1.12.3"
 	}
 }
