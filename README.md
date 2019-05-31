@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/b7752f5b-7406-47cd-9b5e-e6f1c967ea43/deploy-status)](https://app.netlify.com/sites/souvenirs-machine/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b7752f5b-7406-47cd-9b5e-e6f1c967ea43/deploy-status)](https://app.netlify.com/sites/souvenirs-machine/deploys) [Tray demo...](https://souvenirs-machine.netlify.com/)
 
 # A machine with souvenirs for tourists in React
 
