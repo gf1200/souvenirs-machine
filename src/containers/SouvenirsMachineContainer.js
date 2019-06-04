@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-import Display from '../components/Display';
-import MainPanel from '../components/MainPanel';
-import SouvenirsOutput from '../components/SouvenirsOutput';
-import RestOutput from '../components/RestOutput';
 
 const INITIAL_STATE = {
 	charge: 2,
@@ -11,12 +7,12 @@ const INITIAL_STATE = {
 	coinsForChange: [1, 2],
 	totalSouvenirs: 0,
 	totalCoins: 0,
-	messageToDisplay: '',
+	messageToDisplay: 'Please, put in a coin 💰',
 	rest: null,
 	inputCoin: ''
 };
 
-export default class SouvenirMachine extends Component {
+export default class SouvenirsMachineContainer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -140,23 +136,9 @@ export default class SouvenirMachine extends Component {
 		let isSouvenir = availableSouvenirs - totalSouvenirs > 0;
 		let isInputDisable = !isSouvenir || totalCoins >= 2;
 
-		let displayMessage = messageToDisplay;
-		if (!messageToDisplay) displayMessage = 'Please, put in a coin 💰';
-		if (!isSouvenir) displayMessage = 'Sorry no more souvenirs 😔';
+		// if (!messageToDisplay) this.setState({ messageToDisplay: 'Please, put in a coin 💰' });
+		// if (!isSouvenir) displayMessage = 'Sorry no more souvenirs 😔';
 
-		return (
-			<>
-				<Display messageToDisplay={displayMessage} charge={charge} />
-				<MainPanel
-					isInputDisable={isInputDisable}
-					acceptedCoins={acceptedCoins}
-					inputCoin={inputCoin}
-					inputCoinsHandler={this.inputCoinsHandler}
-					acceptCoins={this.acceptCoins}
-				/>
-				<SouvenirsOutput souvenirs={totalSouvenirs} />
-				<RestOutput rest={rest} />
-			</>
-		);
+		return this.props.render(this.state, isInputDisable, this.inputCoinsHandler, this.acceptCoins);
 	}
 }
