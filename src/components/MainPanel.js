@@ -3,7 +3,15 @@ import Level from './shared/Level';
 import InputCoins from './InputCoins';
 import Button from './shared/Button';
 
-const MainPanel = ({ isInputDisable, acceptedCoins, inputCoin, inputCoinsHandler, acceptCoins }) => {
+const MainPanel = ({
+	isInputDisable,
+	acceptedCoins,
+	inputCoin,
+	inputCoinsHandler,
+	acceptCoins,
+	takeBackRest,
+	rest
+}) => {
 	return (
 		<Level>
 			<p>Put coins hear and press START:</p>
@@ -13,7 +21,12 @@ const MainPanel = ({ isInputDisable, acceptedCoins, inputCoin, inputCoinsHandler
 				value={inputCoin}
 				onChange={inputCoinsHandler}
 			/>
-			<Button text='START' onClick={acceptCoins} />
+
+			{!rest ? (
+				<Button text='Accept' onClick={acceptCoins} />
+			) : (
+				<Button text='Take rest' onClick={takeBackRest} />
+			)}
 		</Level>
 	);
 };

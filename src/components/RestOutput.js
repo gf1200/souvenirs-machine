@@ -5,9 +5,9 @@ const RestOutput = ({ rest }) => {
 		<>
 			{rest && (
 				<p>
-					Take Your rest pleas:{' '}
+					Take Your rest pleas in PLN:
 					{rest.map((rest, i) => (
-						<span key={i}>{rest}zł </span>
+						<span key={i}>{rest} </span>
 					))}
 					💰
 				</p>

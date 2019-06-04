@@ -5,11 +5,12 @@ const INITIAL_STATE = {
 	availableSouvenirs: 5,
 	acceptedCoins: [1, 2, 5, 10],
 	coinsForChange: [1, 2],
-	totalSouvenirs: 0,
+	totalSouvenirs: 0, // rezygnuj
 	totalCoins: 0,
 	messageToDisplay: 'Please, put in a coin 💰',
+	inputCoin: '',
 	rest: null,
-	inputCoin: ''
+	error: null
 };
 
 export default class SouvenirsMachineContainer extends Component {
@@ -23,16 +24,17 @@ export default class SouvenirsMachineContainer extends Component {
 
 		this.acceptCoins = this.acceptCoins.bind(this);
 		this.inputCoinsHandler = this.inputCoinsHandler.bind(this);
+		this.onTakeBackRest = this.onTakeBackRest.bind(this);
 	}
 
 	returnRest() {
 		const { totalCoins, coinsForChange } = this.state;
+
 		const { availableCoins, restPocket } = this.getRest(coinsForChange, totalCoins);
-		this.setState(({ rest, coinsForChange, totalCoins, messageToDisplay }) => ({
+		this.setState(({ rest, coinsForChange, totalCoins, error }) => ({
 			coinsForChange: availableCoins,
 			rest: restPocket,
-			totalCoins: 0,
-			messageToDisplay: 'Sorry no more coin for change 😔'
+			error: 'Sorry no more coin for change 😔'
 		}));
 	}
 
@@ -87,12 +89,6 @@ export default class SouvenirsMachineContainer extends Component {
 
 		if (totalCoins === charge) return this.makeSouvenir();
 		if (totalCoins > charge) return this.isRest();
-		else {
-			this.setState(({ messageToDisplay, totalCoins, rest }) => ({
-				messageToDisplay: `Total paid for now: ${totalCoins} 💰`,
-				rest: null
-			}));
-		}
 	}
 
 	acceptCoins() {
@@ -104,21 +100,24 @@ export default class SouvenirsMachineContainer extends Component {
 				({ totalCoins, coinsForChange, inputCoin }) => ({
 					totalCoins: totalCoins + coin,
 					coinsForChange: [...coinsForChange, coin],
-					rest: null,
-					inputCoin: ''
+					inputCoin: '',
+					error: null
 				}),
 				() => this.isCharge()
 			);
 		} else {
 			this.setState(({ messageToDisplay, rest }) => ({
-				messageToDisplay: `⚠️ Sorry ${loaded} is not accept. Please put in correct value`,
-				rest: null
+				error: `⚠️ Sorry ${loaded} is not accept. Please put in correct value`
 			}));
 		}
 	}
 
 	inputCoinsHandler(e) {
 		this.setState({ inputCoin: e.target.value });
+	}
+
+	onTakeBackRest() {
+		this.setState({ totalCoins: 0, error: null, rest: null });
 	}
 
 	render() {
@@ -136,9 +135,14 @@ export default class SouvenirsMachineContainer extends Component {
 		let isSouvenir = availableSouvenirs - totalSouvenirs > 0;
 		let isInputDisable = !isSouvenir || totalCoins >= 2;
 
-		// if (!messageToDisplay) this.setState({ messageToDisplay: 'Please, put in a coin 💰' });
 		// if (!isSouvenir) displayMessage = 'Sorry no more souvenirs 😔';
 
-		return this.props.render(this.state, isInputDisable, this.inputCoinsHandler, this.acceptCoins);
+		return this.props.render(
+			this.state,
+			isInputDisable,
+			this.inputCoinsHandler,
+			this.acceptCoins,
+			this.onTakeBackRest
+		);
 	}
 }
