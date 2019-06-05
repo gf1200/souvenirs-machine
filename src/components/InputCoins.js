@@ -1,11 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const InputSyled = styled.input`
+	padding: 0.75rem;
+`;
+
 const InputCoins = ({ disabled, coins, onChange, value }) => {
 	coins = coins.join(', ');
 	return (
 		<>
-			<input
+			<InputSyled
 				type='text'
 				onChange={onChange}
 				value={value}
