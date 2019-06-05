@@ -5,16 +5,18 @@ import Button from './shared/Button';
 
 const MainPanel = ({ isInputDisable, acceptedCoins, inputCoin, inputCoinsHandler, acceptCoins }) => {
 	return (
-		<Level>
-			<p>Put coins hear and press START:</p>
-			<InputCoins
-				disabled={isInputDisable}
-				coins={acceptedCoins}
-				value={inputCoin}
-				onChange={inputCoinsHandler}
-			/>
+		<div>
+			<Level>
+				<p>Put coins hear and press Accept:</p>
+				<InputCoins
+					disabled={isInputDisable}
+					coins={acceptedCoins}
+					value={inputCoin}
+					onChange={inputCoinsHandler}
+				/>
+			</Level>
 			<Button text='Accept' disabled={isInputDisable} onClick={acceptCoins} />
-		</Level>
+		</div>
 	);
 };
 
