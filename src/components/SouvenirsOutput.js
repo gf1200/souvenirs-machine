@@ -1,12 +1,14 @@
 import React from 'react';
 import Button from './shared/Button';
 
-const SouvenirsOutput = ({ isMade }) =>
+const SouvenirsOutput = ({ isMade, takeSouvenir }) =>
 	isMade && (
-		<h2>
-			Your souvenir is here: <span>📀</span>
-			<Button text={`I'm taking it now`} />
-		</h2>
+		<div>
+			<h2>
+				Your souvenir is here: <span>📀</span>
+			</h2>
+			<Button text={`I'm taking it now`} onClick={takeSouvenir} />
+		</div>
 	);
 
 export default SouvenirsOutput;

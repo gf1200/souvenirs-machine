@@ -10,7 +10,14 @@ const App = () => {
 	return (
 		<>
 			<SouvenirsMachineContainer
-				render={(state, isInputDisable, inputCoinsHandler, acceptCoins, onTakeBackRest) => (
+				render={(
+					state,
+					isInputDisable,
+					inputCoinsHandler,
+					acceptCoins,
+					onTakeBackRest,
+					onTakeSouvenirHandler
+				) => (
 					<>
 						<DisplayContainer
 							{...state}
@@ -26,7 +33,10 @@ const App = () => {
 							takeBackRest={onTakeBackRest}
 							rest={state.rest}
 						/>
-						<SouvenirsOutput isMade={state.isMade} />
+						<SouvenirsOutput
+							isMade={state.isMade}
+							takeSouvenir={onTakeSouvenirHandler}
+						/>
 					</>
 				)}
 			/>

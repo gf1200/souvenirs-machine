@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 const INITIAL_STATE = {
 	charge: 2,
-	availableSouvenirs: 1,
+	availableSouvenirs: 2,
 	acceptedCoins: [1, 2, 5, 10],
 	coinsForChange: [1, 2],
 	totalCoins: 0,
@@ -19,11 +19,10 @@ export default class SouvenirsMachineContainer extends Component {
 			...INITIAL_STATE
 		};
 
-		this.textInput = React.createRef();
-
 		this.acceptCoins = this.acceptCoins.bind(this);
 		this.inputCoinsHandler = this.inputCoinsHandler.bind(this);
 		this.onTakeBackRest = this.onTakeBackRest.bind(this);
+		this.onTakeSouvenirHandler = this.onTakeSouvenirHandler.bind(this);
 	}
 
 	returnRest() {
@@ -118,13 +117,18 @@ export default class SouvenirsMachineContainer extends Component {
 	}
 
 	onTakeBackRest() {
-		this.setState({ totalCoins: 0, error: null, rest: null, isMade: false });
+		this.setState({ totalCoins: 0, error: null, rest: null });
+	}
+
+	onTakeSouvenirHandler() {
+		this.setState({ isMade: false });
 	}
 
 	render() {
-		const { availableSouvenirs } = this.state;
+		const { availableSouvenirs, isMade } = this.state;
 
 		let isInputDisable = false;
+		if (isMade) isInputDisable = true;
 		if (!availableSouvenirs) isInputDisable = true;
 
 		return this.props.render(
@@ -132,7 +136,8 @@ export default class SouvenirsMachineContainer extends Component {
 			isInputDisable,
 			this.inputCoinsHandler,
 			this.acceptCoins,
-			this.onTakeBackRest
+			this.onTakeBackRest,
+			this.onTakeSouvenirHandler
 		);
 	}
 }
