@@ -5,7 +5,6 @@ import DisplayContainer from './containers/DisplayContainer';
 import Display from './components/Display';
 import MainPanel from './components/MainPanel';
 import SouvenirsOutput from './components/SouvenirsOutput';
-import RestOutput from './components/RestOutput';
 
 const App = () => {
 	return (
@@ -27,7 +26,7 @@ const App = () => {
 							takeBackRest={onTakeBackRest}
 							rest={state.rest}
 						/>
-						<SouvenirsOutput souvenirs={state.totalSouvenirs} />
+						<SouvenirsOutput isMade={state.isMade} />
 					</>
 				)}
 			/>

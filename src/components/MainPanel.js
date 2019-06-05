@@ -23,7 +23,7 @@ const MainPanel = ({
 			/>
 
 			{!rest ? (
-				<Button text='Accept' onClick={acceptCoins} />
+				<Button text='Accept' disabled={isInputDisable} onClick={acceptCoins} />
 			) : (
 				<Button text='Take rest' onClick={takeBackRest} />
 			)}

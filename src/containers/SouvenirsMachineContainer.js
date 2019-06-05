@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 
 const INITIAL_STATE = {
 	charge: 2,
-	availableSouvenirs: 5,
+	availableSouvenirs: 1,
 	acceptedCoins: [1, 2, 5, 10],
 	coinsForChange: [1, 2],
-	totalSouvenirs: 0, // rezygnuj
 	totalCoins: 0,
-	messageToDisplay: 'Please, put in a coin 💰',
 	inputCoin: '',
 	rest: null,
-	error: null
+	error: null,
+	isMade: false
 };
 
 export default class SouvenirsMachineContainer extends Component {
@@ -39,10 +38,10 @@ export default class SouvenirsMachineContainer extends Component {
 	}
 
 	makeSouvenir() {
-		this.setState(({ totalSouvenirs, messageToDisplay }) => ({
+		this.setState(({ availableSouvenirs, isMade }) => ({
 			totalCoins: 0,
-			totalSouvenirs: totalSouvenirs + 1,
-			messageToDisplay: ''
+			availableSouvenirs: availableSouvenirs - 1,
+			isMade: !isMade
 		}));
 	}
 
@@ -97,18 +96,20 @@ export default class SouvenirsMachineContainer extends Component {
 
 		if (this.state.acceptedCoins.some(acceptedCoin => acceptedCoin === coin)) {
 			this.setState(
-				({ totalCoins, coinsForChange, inputCoin }) => ({
+				({ totalCoins, coinsForChange, inputCoin, isMade }) => ({
 					totalCoins: totalCoins + coin,
 					coinsForChange: [...coinsForChange, coin],
 					inputCoin: '',
-					error: null
+					error: null,
+					isMade: false
 				}),
 				() => this.isCharge()
 			);
 		} else {
-			this.setState(({ messageToDisplay, rest }) => ({
-				error: `⚠️ Sorry ${loaded} is not accept. Please put in correct value`
-			}));
+			this.setState({
+				error: `⚠️ Sorry ${loaded} is not accept. Please put in correct value`,
+				isMade: false
+			});
 		}
 	}
 
@@ -117,25 +118,14 @@ export default class SouvenirsMachineContainer extends Component {
 	}
 
 	onTakeBackRest() {
-		this.setState({ totalCoins: 0, error: null, rest: null });
+		this.setState({ totalCoins: 0, error: null, rest: null, isMade: false });
 	}
 
 	render() {
-		const {
-			messageToDisplay,
-			availableSouvenirs,
-			totalSouvenirs,
-			totalCoins,
-			rest,
-			charge,
-			acceptedCoins,
-			inputCoin
-		} = this.state;
+		const { availableSouvenirs } = this.state;
 
-		let isSouvenir = availableSouvenirs - totalSouvenirs > 0;
-		let isInputDisable = !isSouvenir || totalCoins >= 2;
-
-		// if (!isSouvenir) displayMessage = 'Sorry no more souvenirs 😔';
+		let isInputDisable = false;
+		if (!availableSouvenirs) isInputDisable = true;
 
 		return this.props.render(
 			this.state,

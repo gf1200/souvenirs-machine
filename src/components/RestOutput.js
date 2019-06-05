@@ -4,13 +4,13 @@ const RestOutput = ({ rest }) => {
 	return (
 		<>
 			{rest && (
-				<p>
-					Take Your rest pleas in PLN:
+				<>
+					Take Your rest pleas:
 					{rest.map((rest, i) => (
-						<span key={i}>{rest} </span>
+						<span key={i}> {rest}zł</span>
 					))}
 					💰
-				</p>
+				</>
 			)}
 		</>
 	);

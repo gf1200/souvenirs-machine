@@ -1,21 +1,12 @@
 import React from 'react';
+import Button from './shared/Button';
 
-const SouvenirsOutput = ({ souvenirs }) => {
-	const finishedSouvenirs = [];
-	for (let i = 0; i < souvenirs; i++) {
-		finishedSouvenirs.push('📀');
-	}
-
-	return (
-		<>
-			{!!souvenirs && <h2>Your souvenirs:</h2>}
-			<p>
-				{finishedSouvenirs.map((souvenir, index) => (
-					<span key={index}>{souvenir}</span>
-				))}
-			</p>
-		</>
+const SouvenirsOutput = ({ isMade }) =>
+	isMade && (
+		<h2>
+			Your souvenir is here: <span>📀</span>
+			<Button text={`I'm taking it now`} />
+		</h2>
 	);
-};
 
 export default SouvenirsOutput;
