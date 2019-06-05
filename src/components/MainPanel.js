@@ -13,7 +13,6 @@ const MainPanel = ({ isInputDisable, acceptedCoins, inputCoin, inputCoinsHandler
 				value={inputCoin}
 				onChange={inputCoinsHandler}
 			/>
-
 			<Button text='Accept' disabled={isInputDisable} onClick={acceptCoins} />
 		</Level>
 	);

@@ -18,7 +18,6 @@ export default class SouvenirsMachineContainer extends Component {
 		this.state = {
 			...INITIAL_STATE
 		};
-
 		this.acceptCoins = this.acceptCoins.bind(this);
 		this.inputCoinsHandler = this.inputCoinsHandler.bind(this);
 		this.onTakeBackRest = this.onTakeBackRest.bind(this);
@@ -27,13 +26,12 @@ export default class SouvenirsMachineContainer extends Component {
 
 	returnRest() {
 		const { totalCoins, coinsForChange } = this.state;
-
 		const { availableCoins, restPocket } = this.getRest(coinsForChange, totalCoins);
-		this.setState(({ rest, coinsForChange, totalCoins, error }) => ({
+		this.setState({
 			coinsForChange: availableCoins,
 			rest: restPocket,
 			error: 'Sorry no more coin for change 😔'
-		}));
+		});
 	}
 
 	makeSouvenir() {
@@ -84,7 +82,6 @@ export default class SouvenirsMachineContainer extends Component {
 
 	isCharge() {
 		const { totalCoins, charge } = this.state;
-
 		if (totalCoins === charge) return this.makeSouvenir();
 		if (totalCoins > charge) return this.isRest();
 	}
@@ -95,19 +92,17 @@ export default class SouvenirsMachineContainer extends Component {
 
 		if (this.state.acceptedCoins.some(acceptedCoin => acceptedCoin === coin)) {
 			this.setState(
-				({ totalCoins, coinsForChange, inputCoin, isMade }) => ({
+				({ totalCoins, coinsForChange }) => ({
 					totalCoins: totalCoins + coin,
 					coinsForChange: [...coinsForChange, coin],
 					inputCoin: '',
-					error: null,
-					isMade: false
+					error: null
 				}),
 				() => this.isCharge()
 			);
 		} else {
 			this.setState({
-				error: `⚠️ Sorry ${loaded} is not accept. Please put in correct value`,
-				isMade: false
+				error: `⚠️ Sorry ${loaded} is not accept. Please put in correct value`
 			});
 		}
 	}
@@ -126,10 +121,7 @@ export default class SouvenirsMachineContainer extends Component {
 
 	render() {
 		const { availableSouvenirs, isMade, rest } = this.state;
-
-		let isInputDisable = false;
-		if (!availableSouvenirs || isMade || rest) isInputDisable = true;
-
+		let isInputDisable = !availableSouvenirs || isMade || rest ? true : false;
 		return this.props.render(
 			this.state,
 			isInputDisable,

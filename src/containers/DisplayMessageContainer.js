@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import RestOutput from '../components/RestOutput';
 
-const DisplayContainer = ({ render, error, rest, charge, totalCoins, isMade, availableSouvenirs }) => {
+const DisplayMessageContainer = ({ render, error, rest, charge, totalCoins, isMade, availableSouvenirs }) => {
 	let messageToDisplay = [
 		'Commemorative coin',
 		`Available souvenirs: ${availableSouvenirs}`,
@@ -15,12 +15,13 @@ const DisplayContainer = ({ render, error, rest, charge, totalCoins, isMade, ava
 	if (totalCoins && totalCoins < charge) messageToDisplay.push(`Total paid for now: ${totalCoins} 💰`);
 	if (isMade) messageToDisplay.push(`The souvenir was released 🌈`);
 
-	return render(messageToDisplay.map((info, i) => <p key={i}>{info}</p>));
+	const message = messageToDisplay.map((info, i) => <p key={i}>{info}</p>);
+	return render(message);
 };
 
-DisplayContainer.propTypes = {
+DisplayMessageContainer.propTypes = {
 	render: PropTypes.func.isRequired,
 	error: PropTypes.string
 };
 
-export default DisplayContainer;
+export default DisplayMessageContainer;
