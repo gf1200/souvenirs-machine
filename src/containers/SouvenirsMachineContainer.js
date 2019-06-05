@@ -125,11 +125,10 @@ export default class SouvenirsMachineContainer extends Component {
 	}
 
 	render() {
-		const { availableSouvenirs, isMade } = this.state;
+		const { availableSouvenirs, isMade, rest } = this.state;
 
 		let isInputDisable = false;
-		if (isMade) isInputDisable = true;
-		if (!availableSouvenirs) isInputDisable = true;
+		if (!availableSouvenirs || isMade || rest) isInputDisable = true;
 
 		return this.props.render(
 			this.state,

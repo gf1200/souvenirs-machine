@@ -30,12 +30,13 @@ const App = () => {
 							inputCoin={state.inputCoin}
 							inputCoinsHandler={inputCoinsHandler}
 							acceptCoins={acceptCoins}
-							takeBackRest={onTakeBackRest}
 							rest={state.rest}
 						/>
 						<SouvenirsOutput
 							isMade={state.isMade}
 							takeSouvenir={onTakeSouvenirHandler}
+							takeBackRest={onTakeBackRest}
+							rest={state.rest}
 						/>
 					</>
 				)}
