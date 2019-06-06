@@ -1,14 +1,21 @@
 import INITIAL_STATE from '../initialState';
 import getRest from './getRest';
-import { checkIsCoinAvailable } from './getRest';
+import { isSome, catFromPocket } from './getRest';
+
 const { acceptedCoins } = INITIAL_STATE;
 
 describe(`Check available current coin in accepted coins: ${acceptedCoins}`, () => {
 	it(`coin: 1 is available`, () => {
-		expect(checkIsCoinAvailable(1, acceptedCoins)).toBeTruthy();
+		expect(isSome(1, acceptedCoins)).toBeTruthy();
 	});
 	it(`coin: 3 it is not available`, () => {
-		expect(checkIsCoinAvailable(3, acceptedCoins)).toBeFalsy();
+		expect(isSome(3, acceptedCoins)).toBeFalsy();
+	});
+});
+
+describe(`It can cut number from pocket after giving index`, () => {
+	it(`Cut 2 from index 1`, () => {
+		expect(catFromPocket(1, [1, 2, 3, 4, 5])).toEqual([1, 3, 4, 5]);
 	});
 });
 
@@ -23,7 +30,7 @@ describe(`Check available current coin in accepted coins: ${acceptedCoins}`, () 
 // zwraca portfel z resztą >> jeżeli jest możliwa do wydania >>> jeżeli nie []
 
 // check f() sprawdż czy badana moneta jest dostępna >> true || folse
-//f() wytnij monetę z dostępnych do wydania
+// check f() wytnij monetę z dostępnych do wydania
 //f() wklej monetę do wydania do portfela klienta
 //f() sprawdź ile jest w portfelu klienta
 // f() sprawdź czy może wydać resztę

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import INITIAL_STATE from '../initialState';
-import { checkIsCoinAvailable } from '../helpers/getRest';
+import { isSome, catFromPocket } from '../helpers/getRest';
 
 export default class SouvenirsMachineContainer extends Component {
 	constructor(props) {
@@ -15,11 +15,10 @@ export default class SouvenirsMachineContainer extends Component {
 	}
 
 	returnRest() {
-		const { totalCoins, coinsForChange } = this.state;
-		const { availableCoins, restPocket } = this.getRest(coinsForChange, totalCoins);
+		const { coinsForChange, rest } = this.getRest(this.state.coinsForChange, this.state.totalCoins);
 		this.setState({
-			coinsForChange: availableCoins,
-			rest: restPocket,
+			coinsForChange,
+			rest,
 			error: 'Sorry no more coin for change 😔'
 		});
 	}
@@ -32,41 +31,37 @@ export default class SouvenirsMachineContainer extends Component {
 		}));
 	}
 
-	getRest(availableCoins = [], rest) {
-		let coinForRest = rest,
+	getRest(pocket, rest) {
+		let forRelease = rest,
 			restPocket = [],
 			sumRestPocket = () => restPocket.reduce((acc, next) => acc + next, 0);
 
-		for (coinForRest; coinForRest > 0; coinForRest--) {
-			while (checkIsCoinAvailable(coinForRest, availableCoins)) {
-				const indexCoin = availableCoins.indexOf(coinForRest);
-				availableCoins = [
-					...availableCoins.slice(0, indexCoin),
-					...availableCoins.slice(indexCoin + 1)
-				];
-				restPocket.push(coinForRest);
-				coinForRest = rest - sumRestPocket();
+		for (forRelease; forRelease > 0; forRelease--) {
+			while (isSome(forRelease, pocket)) {
+				const index = pocket.indexOf(forRelease);
+				pocket = catFromPocket(index, pocket);
+				restPocket.push(forRelease);
+				forRelease = rest - sumRestPocket();
 			}
 		}
-
-		return {
-			availableCoins,
-			restPocket,
-			restPocketSum: sumRestPocket()
-		};
+		if (sumRestPocket() === rest) {
+			return {
+				coinsForChange: pocket,
+				rest: restPocket
+			};
+		} else return false;
 	}
 
 	isRest() {
 		const { charge, totalCoins, coinsForChange } = this.state;
 		let rest = totalCoins - charge;
+		const isRest = this.getRest(coinsForChange, rest);
 
-		const { availableCoins, restPocket, restPocketSum } = this.getRest(coinsForChange, rest);
-
-		if (restPocketSum === rest) {
-			this.setState(({ rest, coinsForChange }) => ({
-				rest: restPocket,
-				coinsForChange: availableCoins
-			}));
+		if (isRest) {
+			this.setState({
+				rest: isRest.rest,
+				coinsForChange: isRest.coinsForChange
+			});
 			this.makeSouvenir();
 		} else return this.returnRest();
 	}
@@ -81,7 +76,7 @@ export default class SouvenirsMachineContainer extends Component {
 		const loaded = this.state.inputCoin;
 		let coin = parseFloat(loaded);
 
-		if (this.state.acceptedCoins.some(acceptedCoin => acceptedCoin === coin)) {
+		if (isSome(coin, this.state.acceptedCoins)) {
 			this.setState(
 				({ totalCoins, coinsForChange }) => ({
 					totalCoins: totalCoins + coin,
